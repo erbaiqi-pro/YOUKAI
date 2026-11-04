@@ -12,13 +12,13 @@ function csvContext(name,csv,doc,more={}){
  const ctx={app:{documents:[doc],activeDocument:doc},File,Folder,Error,alert(){},$:{fileName:'/scripts/'+name+'.jsx',global:{YOUKAI_CSV_FOLDER:'/csv'}},...more};
  return {ctx,files,writes};
 }
-// Preserve the five restored implementations and the five newly approved test scripts.
+// Preserve the nine bundled approved implementations and the retired PDF history.
 // Byte checks ensure packaging does not alter their contents or encoding.
 const crypto=require('crypto');
 const approved=JSON.parse(fs.readFileSync(path.join(root,'docs/maintenance/VERIFIED-SCRIPTS.json'),'utf8'));
 const approvedNames=new Set(approved.files.map(item=>path.basename(item.target)));
-check('the ten author-approved scripts remain byte-for-byte unchanged',()=>{
- assert.equal(approved.files.length,10);
+check('the nine bundled author-approved scripts remain byte-for-byte unchanged',()=>{
+ assert.equal(approved.files.length,9);
  for(const item of approved.files){
   const bytes=fs.readFileSync(path.join(root,item.target));
   assert.equal(bytes.length,item.bytes,item.target);
@@ -27,6 +27,19 @@ check('the ten author-approved scripts remain byte-for-byte unchanged',()=>{
   if(fs.existsSync(original))assert.deepEqual(bytes,fs.readFileSync(original),item.target);
  }
  assert.equal(fs.existsSync(path.join(scripts,'战队色修改.jsx')),false);
+});
+check('the retired PDF script and guide are absent from the official bundle; originals remain unchanged',()=>{
+ assert.equal(approved.retiredFiles.length,1);
+ const item=approved.retiredFiles[0];
+ assert.equal(item.target,'com.youkai.toolbox/user_scripts/导出PDF.jsx');
+ for(const name of ['导出PDF.jsx','导出PDF.md'])assert.equal(fs.existsSync(path.join(scripts,name)),false);
+ for(const name of [item.source,item.archive]){
+  const file=path.join(root,name);
+  if(fs.existsSync(file)){
+   const bytes=fs.readFileSync(file);assert.equal(bytes.length,item.bytes);
+   assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),item.sha256);
+  }
+ }
 });
 check('renamed color script uses the unchanged team header and swatch-name template',()=>{
  const csv=fs.readFileSync(path.join(root,'com.youkai.toolbox/assets/templates/色板方案切换.csv'),'utf8').replace(/^\uFEFF/,'');

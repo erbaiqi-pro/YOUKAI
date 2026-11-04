@@ -1,6 +1,6 @@
 {
   "name": "youkai-toolbox",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "private": true,
   "description": "Adobe CEP toolbox and regression checks",
   "scripts": {

@@ -7,6 +7,7 @@ var REPO = "erbaiqi-pro/YOUKAI";
 var LATEST_MANIFEST = "https://github.com/" + REPO + "/releases/latest/download/YOUKAI-Update.json";
 var MANIFEST = "YOUKAI-Update.json", CATALOG = "release-files.json";
 var MAX_ZIP = 64 * 1024 * 1024, MAX_TOTAL = 128 * 1024 * 1024, MAX_FILES = 4096;
+var WEBSITE = "https://erbaiqi.pages.dev/";
 function fail(message) { throw new Error(message); }
 function sha(data) { return crypto.createHash("sha256").update(data).digest("hex"); }
 function version(value) {
@@ -57,6 +58,9 @@ function safeName(name) {
 function managed(name) {
   return /^(index(?:_full|_2023_safe)?\.html|release\.json|config\.json|LICENSE\.txt|THIRD_PARTY_NOTICES\.md)$/.test(name) || /^(assets|CSXS|scripts|user_scripts|licenses)\//.test(name);
 }
+function scriptFile(name) {
+  return /^user_scripts\/[^/]+\.(jsx|md)$/.test(name) || /^assets\/templates\/[^/]+\.csv$/.test(name);
+}
 function catalog(value) {
   if (!value || value.schemaVersion !== 1 || value.name !== "YOUKAI" || !Array.isArray(value.files) || value.files.length > MAX_FILES) fail("更新文件清单无效。");
   version(value.version);
@@ -73,10 +77,14 @@ function catalog(value) {
 function validateManifest(value, expectedVersion) {
   if (!value || value.schemaVersion !== 1 || value.name !== "YOUKAI" || value.repository !== REPO || value.channel !== "stable") fail("更新清单不属于 YOUKAI 正式发布。");
   if (value.version !== version(expectedVersion) || version(value.version) !== value.version) fail("更新清单和发布版本不一致。");
-  if (value.minUpdaterVersion !== 1) fail("请安装新版 YOUKAI 后再使用此更新。");
+  if ([1, 2].indexOf(value.minUpdaterVersion) < 0) fail("请安装新版 YOUKAI 后再使用此更新。");
+  if (value.productVersion !== undefined) version(value.productVersion);
+  if (value.minEngineVersion !== undefined) version(value.minEngineVersion);
+  if (value.updateKind !== undefined && ["bootstrap", "scripts", "installer"].indexOf(value.updateKind) < 0) fail("更新类型无效。");
+  if (value.updateKind === "scripts" && (value.minUpdaterVersion !== 2 || !value.productVersion || !value.minEngineVersion)) fail("脚本更新信息不完整。");
   if (!Array.isArray(value.platforms) || !value.platforms.length || value.platforms.some(function (p) { return p !== "win32" && p !== "darwin"; })) fail("更新平台信息无效。");
   if (typeof value.minHostMajor !== "number" || value.minHostMajor < 16 || value.minHostMajor % 1) fail("Illustrator 版本要求无效。");
-  if (!/^[a-f0-9]{64}$/.test(value.sha256) || value.asset !== "YOUKAI-Update-" + value.version + ".zip" || typeof value.size !== "number" || value.size < 1 || value.size > MAX_ZIP || value.size % 1) fail("更新下载信息无效。");
+  if (value.updateKind !== "installer" && (!/^[a-f0-9]{64}$/.test(value.sha256) || value.asset !== "YOUKAI-Update-" + value.version + ".zip" || typeof value.size !== "number" || value.size < 1 || value.size > MAX_ZIP || value.size % 1)) fail("更新下载信息无效。");
   return value;
 }
 function releaseAsset(link, tag, name) {
@@ -193,6 +201,7 @@ function unpack(buffer) {
 }
 function payload(buffer, manifest) {
   validateManifest(manifest, manifest.version);
+  if (manifest.updateKind === "installer") fail("此版本需要前往官网下载安装包。");
   if (buffer.length !== manifest.size || sha(buffer) !== manifest.sha256) fail("更新文件 SHA256 校验失败，请重新下载。");
   var files = unpack(buffer);
   if (!files[CATALOG]) fail("更新包缺少文件清单。");
@@ -201,6 +210,16 @@ function payload(buffer, manifest) {
   list.files.forEach(function (file) {
     if (!files[file.path] || files[file.path].length !== file.size || sha(files[file.path]) !== file.sha256) fail("更新文件校验失败：" + file.path);
   });
+  if (manifest.updateKind === "scripts") {
+    Object.keys(files).forEach(function (name) { if (name !== CATALOG && name !== "release.json" && !scriptFile(name)) fail("脚本更新不能修改插件程序或设置：" + name); });
+    if (!files["release.json"]) fail("脚本更新缺少版本信息。");
+    var scriptRelease = json(files["release.json"]);
+    if (scriptRelease.name !== "YOUKAI" || scriptRelease.version !== manifest.version || scriptRelease.productVersion !== manifest.productVersion || scriptRelease.engineVersion !== manifest.minEngineVersion || scriptRelease.channel !== "stable") fail("脚本更新版本不匹配。");
+    var scripts = Object.keys(files).filter(function (name) { return /^user_scripts\/[^/]+\.jsx$/.test(name); });
+    if (scripts.length !== scriptRelease.scriptCount) fail("更新包脚本数量不一致。");
+    scripts.forEach(function (name) { if (!files[name.replace(/\.jsx$/, ".md")]) fail("脚本更新缺少使用说明。"); });
+    return {files: files, catalog: list, scriptsOnly: true, release: scriptRelease};
+  }
   ["index.html", "index_full.html", "assets/js/app.js", "assets/js/updater.js", "assets/js/update-ui.js", "scripts/main.jsx", "release.json", "CSXS/manifest.xml"].forEach(function (name) { if (!files[name]) fail("更新包缺少必要文件：" + name); });
   var release = json(files["release.json"]), xml = String(files["CSXS/manifest.xml"]);
   if (release.name !== "YOUKAI" || version(release.version) !== manifest.version || !/<ExtensionManifest\b[^>]*\bExtensionBundleId="com\.youkai\.extension"/.test(xml)) fail("更新包不是匹配的 YOUKAI 插件。");
@@ -235,7 +254,8 @@ function installationRoot(root, allowMissing) {
 }
 function create(options) {
   var root = path.resolve(options.root), dataDir = path.resolve(options.dataDir);
-  var current = version(readJson(path.join(root, "release.json")).version);
+  var currentRelease = readJson(path.join(root, "release.json"));
+  var current = version(currentRelease.version);
   var cacheFile = path.join(dataDir, "latest.json"), journalFile = path.join(dataDir, "transaction.json"), lockFile = path.join(dataDir, "update.lock");
   var retryFile = path.join(dataDir, "rate-limit.json");
   var backupBase = path.join(path.dirname(path.dirname(root)), "YOUKAI-update-backups");
@@ -245,6 +265,17 @@ function create(options) {
   function compatible(manifest) {
     if (manifest.platforms.indexOf(platform) < 0) fail("这个版本不适用于当前系统。");
     if (hostMajor && manifest.minHostMajor > hostMajor) fail("这个版本需要 Illustrator " + manifest.minHostMajor + " 或更高版本。");
+  }
+  function displayVersion() { return currentRelease.productVersion || current; }
+  function updateKind(manifest) {
+    var kind = manifest.updateKind || "bootstrap";
+    if (kind === "scripts") {
+      if (manifest.productVersion.split(".").slice(0, 2).join(".") !== displayVersion().split(".").slice(0, 2).join(".") || compare(manifest.minEngineVersion, currentRelease.engineVersion || current) !== 0) return "installer";
+    }
+    return kind;
+  }
+  function information(manifest) {
+    return {displayVersion: manifest.productVersion || manifest.version, currentDisplayVersion: displayVersion(), updateKind: updateKind(manifest), downloadUrl: WEBSITE};
   }
   function candidate(release, manifest) {
     if (!release || release.draft || release.prerelease || !Array.isArray(release.assets)) fail("未找到有效的正式发布。");
@@ -256,14 +287,16 @@ function create(options) {
     if (matches[0].size !== manifest.size) fail("更新文件大小和发布信息不一致。");
     var expectedPage = "https://github.com/" + REPO + "/releases/tag/" + encodeURIComponent(release.tag_name);
     if (release.html_url !== expectedPage) fail("更新说明地址不正确。");
-    return {state: compare(next, current) > 0 ? "available" : "current", version: next, currentVersion: current, notes: String(release.body || "").slice(0, 12000), url: expectedPage, manifest: manifest, archiveUrl: matches[0].browser_download_url};
+    var result = {state: compare(next, current) > 0 ? "available" : "current", version: next, currentVersion: current, notes: String(release.body || "").slice(0, 12000), url: expectedPage, manifest: manifest, archiveUrl: matches[0].browser_download_url};
+    var extra = information(manifest); Object.keys(extra).forEach(function (key) { result[key] = extra[key]; }); return result;
   }
   function publicCandidate(manifest) {
     validateManifest(manifest, manifest && manifest.version);
     var next = manifest.version, tag = "v" + next;
-    return {state: compare(next, current) > 0 ? "available" : "current", version: next, currentVersion: current, notes: "",
+    var result = {state: compare(next, current) > 0 ? "available" : "current", version: next, currentVersion: current, notes: "",
       url: "https://github.com/" + REPO + "/releases/tag/" + tag, manifest: manifest,
       archiveUrl: "https://github.com/" + REPO + "/releases/download/" + tag + "/" + manifest.asset};
+    var extra = information(manifest); Object.keys(extra).forEach(function (key) { result[key] = extra[key]; }); return result;
   }
   function cached() {
     try { var saved = readJson(cacheFile), result = saved.release ? candidate(saved.release, saved.manifest) : saved.manifest ? publicCandidate(saved.manifest) : {state: "current", currentVersion: current}; result.checkedAt = saved.checkedAt; return result; }
@@ -303,12 +336,18 @@ function create(options) {
   function installBuffer(buffer, manifest) {
     if (options.isBusy && options.isBusy()) fail("请先完成或停止脚本任务，再更新 YOUKAI。");
     compatible(manifest); validateManifest(manifest, manifest.version);
+    if (updateKind(manifest) === "installer") fail("此版本需要前往官网下载安装包，已保留当前插件和设置。");
     if (compare(manifest.version, current) <= 0) fail("更新版本不高于当前版本。");
     installationRoot(root);
     var pack = payload(buffer, manifest), old = inventory(root), oldCatalog = null;
     if (fs.existsSync(path.join(root, CATALOG))) oldCatalog = catalog(readJson(path.join(root, CATALOG)));
+    if (pack.scriptsOnly) {
+      if (!oldCatalog) fail("缺少原版文件清单，请先安装正式版。");
+      var merged = {schemaVersion: 1, name: "YOUKAI", version: manifest.version, files: oldCatalog.files.filter(function (file) { return file.path !== "release.json" && !scriptFile(file.path); }).concat(pack.catalog.files)};
+      pack.files[CATALOG] = Buffer.from(JSON.stringify(merged, null, 2) + "\n", "utf8");
+    }
     var oldManaged = Object.create(null), newManaged = Object.create(null);
-    if (oldCatalog) oldCatalog.files.forEach(function (file) { oldManaged[file.path.toLowerCase()] = true; });
+    if (oldCatalog) oldCatalog.files.forEach(function (file) { if (!pack.scriptsOnly || file.path === "release.json" || scriptFile(file.path)) oldManaged[file.path.toLowerCase()] = true; });
     Object.keys(pack.files).forEach(function (name) { newManaged[name.toLowerCase()] = true; });
     var token = Date.now() + "-" + crypto.randomBytes(6).toString("hex");
     plain(backupBase); mkdir(backupBase);
@@ -338,6 +377,7 @@ function create(options) {
         fs.chmodSync(target, stat.mode & 511); fs.utimesSync(target, stat.atime, stat.mtime);
       });
       verifyTree(stage, pack.catalog);
+      journal.newFiles = inventory(stage);
       if (options.isBusy && options.isBusy()) fail("脚本任务尚未完成，更新已停止。");
       if (JSON.stringify(inventory(root)) !== JSON.stringify(old)) fail("安装文件在准备期间发生了变化，请重试。");
       // 新旧目录在同一 CEP 目录下的同一磁盘；每次移动前记录状态。
@@ -350,7 +390,8 @@ function create(options) {
       try { fs.unlinkSync(cacheFile); } catch (ignoredCache) {}
       fs.unlinkSync(journalFile);
       current = manifest.version;
-      return {ok: true, version: current, backupPath: backup, reloadRequired: true};
+      currentRelease = readJson(path.join(root, "release.json"));
+      return {ok: true, version: current, displayVersion: displayVersion(), backupPath: backup, reloadRequired: true, scriptsOnly: !!pack.scriptsOnly};
     } catch (error) {
       if (movedOld) {
         try {
@@ -383,7 +424,10 @@ function create(options) {
     try {
       var committed = false;
       if (journal.phase === "committed" && fs.existsSync(root)) {
-        try { verifyTree(root, catalog(readJson(path.join(root, CATALOG)))); committed = true; } catch (invalidNew) {}
+        try {
+          if (Array.isArray(journal.newFiles)) committed = JSON.stringify(inventory(root)) === JSON.stringify(journal.newFiles);
+          else { verifyTree(root, catalog(readJson(path.join(root, CATALOG)))); committed = true; }
+        } catch (invalidNew) {}
       }
       if (!committed && fs.existsSync(journal.backup)) {
         if (!Array.isArray(journal.oldFiles) || JSON.stringify(inventory(journal.backup)) !== JSON.stringify(journal.oldFiles)) fail("旧版备份校验失败，请人工检查后恢复。");
@@ -391,7 +435,7 @@ function create(options) {
         fs.renameSync(journal.backup, root);
       }
       if (!fs.existsSync(root)) fail("安装目录缺失，请从 YOUKAI-update-backups 中恢复旧版。");
-      current = version(readJson(path.join(root, "release.json")).version);
+      currentRelease = readJson(path.join(root, "release.json")); current = version(currentRelease.version);
       fs.unlinkSync(journalFile);
       return {recovered: true, version: current};
     } finally { unlock(); }
@@ -402,6 +446,7 @@ function create(options) {
       if (options.isBusy && options.isBusy()) fail("请先完成或停止脚本任务，再更新 YOUKAI。");
       compatible(result.manifest); installationRoot(root);
       validateManifest(result.manifest, result.version);
+      if (updateKind(result.manifest) === "installer") fail("此版本需要前往官网下载安装包，已保留当前插件和设置。");
       if (!releaseAsset(result.archiveUrl, "v" + result.version, result.manifest.asset) && !releaseAsset(result.archiveUrl, result.version, result.manifest.asset)) fail("更新下载地址不正确。");
     } catch (error) { return Promise.reject(error); }
     busy = true; notify("downloading");
@@ -409,6 +454,6 @@ function create(options) {
       notify("verifying"); return installBuffer(buffer, result.manifest);
     }).then(function (done) { busy = false; notify("done", done); return done; }, function (error) { busy = false; notify("error", {message: error.message}); throw error; });
   }
-  return {check: check, cached: cached, install: install, installBuffer: installBuffer, recover: recover, version: function () { return current; }};
+  return {check: check, cached: cached, install: install, installBuffer: installBuffer, recover: recover, version: function () { return current; }, displayVersion: displayVersion};
 }
 module.exports = {create: create, compare: compare, version: version, validateManifest: validateManifest, unpack: unpack, payload: payload, sha256: sha, repository: REPO, httpFailure: httpFailure, latestManifestUrl: LATEST_MANIFEST};

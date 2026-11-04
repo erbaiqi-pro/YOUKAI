@@ -1,48 +1,40 @@
-# YOUKAI 1.0.1
+# YOUKAI 1.0.0 正式版
 
-作者：二百七。Adobe Illustrator 脚本工具箱，包含 27 个脚本、简明说明、CSV 配置与批量运行面板。
+作者：二百七。面向 Adobe Illustrator 的脚本工具箱，内置 26 个工具，提供简明说明、CSV 模板及批处理。
 
-[下载 Windows 内测安装包](https://github.com/erbaiqi-pro/YOUKAI/releases/tag/v1.0.1) · [作者网站](https://erbaiqi.pages.dev/)
+[下载安装包](https://github.com/erbaiqi-pro/YOUKAI/releases/latest) · [作者网站](https://erbaiqi.pages.dev/)
 
 ## 使用
 
-1. 保存工作，退出 Adobe 软件后安装 YOUKAI。
+1. 首次安装前保存工作并退出 Adobe 软件，运行 Windows 安装包。
 2. 在 Illustrator 的“窗口 > 扩展”中打开 YOUKAI。
-3. 设置 CSV 和输出目录；双击脚本运行，点击“说明”查看步骤。
+3. 在系统设置中选择 CSV 和输出目录。双击工具运行，点击“说明”查看步骤。
 
-“战队色修改”仅改文件名为“色板方案切换”。配色表首列表头仍为“战队”，第二列及后续列表头是实际色板名，文档使用 `战队@名称`。
+先用“集体注释”生成对象注释，再手填 CSV，通过“按注释批量修改”移动对象、改专色 T 值、改普通 CMYK 色值或删除。批处理跳过 link／links 文件夹；打包收集链接素材的功能保持原样。
 
-2026-10-20 新增：刀线尺寸标注、导出PDF、链接按文件夹命名、文本按空格拆分、文字跟随排版。均保留作者确认的测试版本代码，说明已整理到对应脚本旁。
+“导出PDF”已从内置工具中移除。当前不调整分类，其余工具代码原样保留。9 个已验收内置脚本采用固定 SHA256 校验；被移除的 PDF 脚本只保留历史校验记录。
 
-2026-11-04 新增：集体注释、按注释批量修改。先生成注释，再手填 CSV 规则，批量移动、改专色 T 值、改普通 CMYK 色值或删除；批处理跳过 link／links 文件夹。各工具的简明说明位于脚本旁。
+## 自愿更新
 
-1.0.1 修复 Illustrator 2026 中宿主桥接无法加载的问题。更新检查改为直接读取 GitHub 公开发布清单，不依赖 REST API 额度；403 会提示请求被拒绝或受限，不再误报为电脑没联网。
+发现新版本时，网站 LOGO 旁显示红色 NEW；没有自动弹窗或强制更新。
 
-## 联网更新
+- 1.0.x 的脚本更新：仅更新内置脚本、说明、模板和版本清单，保留路径设置、个人 CSV、自定义脚本和插件程序。
+- 1.1.0、2.0.0 等大版本或需要新版插件程序的更新：显示官网下载入口，不在面板里替换程序。
+- 测试版首次升级到此正式版：一次性同步升级更新器，保留现有路径设置；以后按上述规则更新。
 
-此版本已接入 GitHub 更新：后续正式版本在网站 LOGO 旁显示红色 NEW，点击后自愿更新，没有自动弹窗。可在系统设置中手动检查更新。检查通过公开发布文件完成，不使用 API Key。
+对外版本为 **1.0.0 正式版**。为使数字更大的旧测试版也能识别更新，本次内部更新编号和 GitHub 标签为 **1.0.3 / v1.0.3**。历史测试标签不覆盖、不改写。
 
-当前仓库：https://github.com/erbaiqi-pro/YOUKAI 。1.0.0 为首个含更新器的内测首装版本，请改用 1.0.1 修复包。内测发布不触发正式版自动更新提醒；宿主加载已在 Illustrator 2026 验证，完整的实际画稿流程仍需试用。发布与使用步骤见 [联网更新](docs/联网更新.md)。
+完整步骤与维护规则见 [联网更新](docs/联网更新.md)。
 
-## 隐私
+## 源码与验证
 
-普通脚本本地运行，更新器不需要 API Key，不上传设计稿、CSV 或对象注释。源码与更新包构建前会筛查常见密钥和敏感文件；检查不等于绝对安全保证。详见 [隐私与密钥](docs/PRIVACY.md)。
+- `com.youkai.toolbox/`：插件、脚本、说明和模板。
+- `installers/`：Windows 与 macOS 安装工具；Windows 使用 Inno Setup 6 编译。
+- `tools/`：构建与检查工具。`npm test` 检查脚本及隔离目录内的更新事务；`npm run test:ui` 检查面板。
+- `docs/`、`licenses/`：更新记录、校验记录、隐私说明及许可。
 
-## 源码
+`python tools/build-release.py` 生成完整安装包和干净源码副本。`python tools/build-update.py` 默认生成仅含脚本及配套文件的更新包；程序升级使用 `--kind installer`。`--kind bootstrap` 仅允许本次测试版转正式版的兼容升级。
 
-- `com.youkai.toolbox/`：插件、脚本及使用说明。
-- `installers/`：安装器源码；Windows EXE 使用 Inno Setup 6 编译。
-- `tools/`：检查和打包工具。
-- `docs/`、`licenses/`：更新记录、已验收脚本校验和许可。
+真实宿主编译可运行 `npm run test:host`，不运行或保存画稿处理脚本。实际输出仍需在设计文件副本上核对；macOS 尚未实机验收。
 
-运行 `npm test` 检查代码；`python tools/build-release.py` 生成 Windows 安装包。界面检查需要 Playwright，可用 `PLAYWRIGHT_MODULE` 和 `CHROME_PATH` 指定本地环境。
-
-Windows 安装了 Illustrator 时，可运行 `npm run test:host` 进行真实宿主编译和桥接加载检查。测试前先结束批处理；该检查不运行画稿处理脚本，不修改、保存或关闭文档。
-
-运行 `python tools/build-update.py` 在本地生成 `YOUKAI-Update.json` 和更新 ZIP。该命令不生成 EXE，也不上传文件。测试更新使用隔离的 CEP 文件夹，不会改动真实 Adobe 安装。
-
-已验收的 10 个脚本按固定 SHA256 校验，保持原文件内容，其中包括本次纳入的 5 个测试脚本。自动检查采用模拟 Adobe 对象，实际输出以宿主试用为准。macOS 安装脚本尚未验收。
-
-## 许可
-
-项目采用 [MIT](LICENSE.txt)；版权声明与许可须保留。第三方说明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+普通工具本地运行；更新不需要 API Key，不上传设计稿、对象注释或 CSV。发布前执行密钥筛查，详见 [隐私说明](docs/PRIVACY.md)。项目采用 [MIT](LICENSE.txt)，第三方许可见 [第三方说明](THIRD_PARTY_NOTICES.md)。

@@ -3,7 +3,7 @@
   #define YoukaiPayloadRoot "..\..\com.youkai.toolbox"
 #endif
 #ifndef YoukaiVersion
-  #define YoukaiVersion "1.0.1"
+  #define YoukaiVersion "1.0.0"
 #endif
 [Setup]
 AppId=com.youkai.toolbox

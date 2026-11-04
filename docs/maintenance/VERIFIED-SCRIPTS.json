@@ -1,5 +1,5 @@
 {
-  "note": "用户已测试并要求原样保留的脚本。只将战队色修改.jsx改名为色板方案切换.jsx；禁止改动这些文件的代码、注释、编码或换行。 2026-10-20 用户确认新增的 5 个测试脚本好用并要求纳入安装包；这 5 个脚本同样按原始字节保留。",
+  "note": "用户已测试并要求原样保留的脚本。只将战队色修改.jsx改名为色板方案切换.jsx；禁止改动这些文件的代码、注释、编码或换行。 2026-10-20 用户确认新增的 5 个测试脚本好用并要求纳入安装包；这 5 个脚本同样按原始字节保留。 2026-11-04 按作者要求从正式版本移除导出PDF，历史记录转存 retiredFiles；其余 9 个内置验收脚本继续逐字节保护。",
   "files": [
     {
       "source": "项目资料/已验收原脚本/变量导出到表格.jsx",
@@ -39,13 +39,6 @@
       "approved": "2026-10-20"
     },
     {
-      "source": "项目资料/测试脚本/导出PDF.jsx",
-      "target": "com.youkai.toolbox/user_scripts/导出PDF.jsx",
-      "sha256": "9aa34dd5e7485091226d02dafafd37ef6d4dd8109775c7c91d291ea1d2a08247",
-      "bytes": 9795,
-      "approved": "2026-10-20"
-    },
-    {
       "source": "项目资料/测试脚本/链接按文件夹命名.jsx",
       "target": "com.youkai.toolbox/user_scripts/链接按文件夹命名.jsx",
       "sha256": "349755da52a7329dc30682ca6e71c79e9481f810a218b3662d2fd25c25230277",
@@ -65,6 +58,18 @@
       "sha256": "5f3ccad3025061c54d1a2d987190803fd9235a22d36ff6597ba85bc37886bc98",
       "bytes": 32127,
       "approved": "2026-10-20"
+    }
+  ],
+  "retiredFiles": [
+    {
+      "source": "项目资料/测试脚本/导出PDF.jsx",
+      "target": "com.youkai.toolbox/user_scripts/导出PDF.jsx",
+      "sha256": "9aa34dd5e7485091226d02dafafd37ef6d4dd8109775c7c91d291ea1d2a08247",
+      "bytes": 9795,
+      "approved": "2026-10-20",
+      "archive": "项目资料/停用脚本/导出PDF/导出PDF.jsx",
+      "removed": "2026-11-04",
+      "reason": "作者要求从正式版本移除；只保留内部原稿和历史校验。"
     }
   ]
 }

@@ -57,10 +57,11 @@ function walk(d){return fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDi
  assert.equal(await page.locator('.logo-title').textContent(),'YOUKAI');
  assert.equal(await page.locator('.logo-tag').count(),0);
  assert.equal(await page.getByText('PDF效果图', {exact:true}).count(),0);
+ assert.equal(await page.getByText('导出PDF.jsx', {exact:true}).count(),0);
  assert.equal(await page.getByText('战队色修改', {exact:true}).count(),0);
  const shots=path.join(root,'项目资料/验证记录/界面截图');fs.mkdirSync(shots,{recursive:true});
  const csvNames=fs.readdirSync(path.join(ext,'assets/templates')).filter(n=>n.endsWith('.csv')).map(n=>n.replace(/csv$/,'jsx'));
- for(const name of [...new Set(['模板批量换图.jsx','分层导出.jsx','文档净化转曲.jsx','刀线尺寸标注.jsx','导出PDF.jsx','链接按文件夹命名.jsx','文本按空格拆分.jsx','文字跟随排版.jsx','集体注释.jsx',...csvNames])]) {
+ for(const name of [...new Set(['模板批量换图.jsx','分层导出.jsx','文档净化转曲.jsx','刀线尺寸标注.jsx','链接按文件夹命名.jsx','文本按空格拆分.jsx','文字跟随排版.jsx','集体注释.jsx',...csvNames])]) {
    await page.locator('.doc-btn').filter({hasText:'说明'}).evaluateAll((buttons,name)=>buttons.find(b=>b.dataset.name===name).click(),name);
    await page.waitForFunction(()=>document.querySelector('#docModal').classList.contains('open'));
    assert.match(await page.locator('#docContent').textContent(),/用途/);
@@ -191,6 +192,10 @@ function walk(d){return fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDi
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'horizontal overflow at '+width);
  }
  assert.deepEqual(errors,[]);
+ await page.evaluate(()=>{window.updateResult={state:'available',version:'2.0.0',displayVersion:'2.0.0',currentVersion:'1.0.3',currentDisplayVersion:'1.0.0',updateKind:'installer',downloadUrl:'https://erbaiqi.pages.dev/',url:'https://github.com/erbaiqi-pro/YOUKAI/releases/tag/v2.0.0'};});
+ await page.locator('#toggleUnifiedSettingsBtn').click();await page.locator('[data-target="settingsForm"]').click();await page.locator('#youkaiCheckUpdateBtn').click();await page.waitForFunction(()=>document.querySelector('#youkaiApplyUpdateBtn').textContent.includes('官网'));
+ const installCalls=await page.evaluate(()=>window.updateInstallCalls);await page.locator('#youkaiApplyUpdateBtn').click();assert.equal(await page.evaluate(()=>window.updateInstallCalls),installCalls);assert.equal(await page.evaluate(()=>window.openedUrls.at(-1)),'https://erbaiqi.pages.dev/');assert.equal(await page.evaluate(()=>window.YOUKAI_UPDATE_BUSY),false);assert.match(await page.locator('#youkaiUpdateStatus').textContent(),/完整安装包/);
+ await page.locator('#youkaiCloseUpdateBtn').click();await showAvailableUpdate();
  await page.evaluate(()=>{window.updateRecoveryRequired=true;});await page.locator('#youkaiApplyUpdateBtn').click();await page.waitForFunction(()=>document.querySelector('#youkaiUpdateTitle').textContent.includes('需要恢复旧版'));
  assert.equal(await page.locator('#batchZzzBtn').isDisabled(),true);assert.equal(await page.evaluate(()=>window.YOUKAI_UPDATE_BUSY),true);assert.equal(await page.locator('#youkaiApplyUpdateBtn').isVisible(),false);
  await page.goto('file:///'+path.join(ext,'index_2023_safe.html').replace(/\\/g,'/'));assert.equal(await page.locator('#list button').count(),scriptCount);

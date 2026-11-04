@@ -19,7 +19,8 @@ spec.loader.exec_module(snapshot)
 
 def main():
     approved = snapshot.verify_approved_scripts()
-    version = json.loads((ROOT / 'com.youkai.toolbox/release.json').read_text(encoding='utf-8'))['version']
+    release = json.loads((ROOT / 'com.youkai.toolbox/release.json').read_text(encoding='utf-8'))
+    version = release.get('productVersion', release['version'])
     if not re.fullmatch(r'\d+\.\d+\.\d+', version):
         raise RuntimeError('Expected a three-part release version')
     exe_name = 'YOUKAI_' + version + '_Setup.exe'
@@ -83,9 +84,10 @@ def main():
         archived.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(str(old_path), str(archived))
     exe.unlink()  # Only the known, verified compiler output; never remove a directory tree.
-    intro = (f'YOUKAI {version} · 内测版\n作者：二百七\n'
+    intro = (f'YOUKAI {version} · 正式版\n作者：二百七\n'
              f'内置 {script_count} 个脚本。\n\n'
-             '包含集体注释、按注释批量修改和自愿联网更新。\n\n'
+             '包含集体注释、按注释批量修改，已移除导出PDF。\n'
+             '小更新仅替换脚本及配套文件，保留路径设置；大版本请前往官网下载完整安装包。\n\n'
              '1. 保存工作，完全退出 Illustrator、Photoshop 和 InDesign。\n'
              f'2. 双击 {exe_name}，选择安装语言，允许旧版清理授权。\n'
              '3. 重启 Illustrator，在“窗口 > 扩展”中打开 YOUKAI。\n'
@@ -93,9 +95,9 @@ def main():
              '安装会先备份并清理旧版，再安装新版。外部 CSV 保留。\n'
              '旧版及自定义脚本备份：%LOCALAPPDATA%\\YOUKAI\\backups\n'
              '源码与版本下载：https://github.com/erbaiqi-pro/YOUKAI\n'
-             '本版为内测版，首次使用请先用设计文件副本试用。\n')
+             '测试版用户可从面板的 NEW 标识自愿升级；此首次升级同步更新更新器。\n')
     (delivery / '安装说明.txt').write_text(intro, encoding='utf-8-sig')
-    record = dict(name='YOUKAI', version=version, author='二百七', channel='internal-test',
+    record = dict(name='YOUKAI', version=version, update_version=release['version'], author='二百七', channel=release['channel'],
                   script_count=script_count,
                   built=datetime.now().isoformat(timespec='seconds'), exe=str(target),
                   exe_sha256=snapshot.digest(target), source=str(source),

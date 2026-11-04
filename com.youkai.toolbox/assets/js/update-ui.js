@@ -23,13 +23,17 @@
     function render(result, message) {
       latest = result || latest;
       var available = latest && latest.state === "available";
+      var installer = available && latest.updateKind === "installer";
+      var nextVersion = available && (latest.displayVersion || latest.version);
       badge.hidden = !available;
-      badge.title = available ? "YOUKAI " + latest.version + " 可更新" : "";
+      badge.title = available ? "YOUKAI " + nextVersion + " 可更新" : "";
       apply.hidden = !available; release.hidden = !available; reload.hidden = !applied;
-      title.textContent = available ? "发现新版本 " + latest.version : "软件更新";
+      apply.textContent = installer ? "前往官网下载" : "更新脚本";
+      title.textContent = available ? "发现新版本 " + nextVersion : "软件更新";
       if (message) text(message);
-      else if (available) text("当前 " + latest.currentVersion + " → " + latest.version + "。更新会保留表格、个人脚本和设置。");
-      else text("当前版本 " + service.version() + "，暂无可用更新。");
+      else if (installer) text("此版本需要完整安装包，请前往官网下载。当前插件和路径设置保持原样。");
+      else if (available) text("当前 " + (latest.currentDisplayVersion || latest.currentVersion) + " → " + nextVersion + "。只更新脚本及配套文件，保留路径设置、个人表格和自定义脚本。");
+      else text("当前版本 " + (service.displayVersion ? service.displayVersion() : service.version()) + "，暂无可用更新。");
     }
     function progress(phase, data) {
       var messages = {downloading: "正在下载更新…", verifying: "正在校验更新文件…", preparing: "正在准备更新并保留个人文件…", installing: "正在备份并更新程序…"};
@@ -41,7 +45,7 @@
       var updater = require(modulePath), env = options.cs.getHostEnvironment() || {};
       service = updater.create({root: options.root, dataDir: path.join(options.userData, "Youkai", "updates"), hostMajor: parseInt(env.appVersion || "0", 10), isBusy: options.isBusy, onProgress: progress});
       service.recover();
-      if (byId("youkaiCurrentVersion")) byId("youkaiCurrentVersion").textContent = service.version();
+      if (byId("youkaiCurrentVersion")) byId("youkaiCurrentVersion").textContent = (service.displayVersion ? service.displayVersion() : service.version()) + " 正式版";
     } catch (error) {
       badge.hidden = true;
       if (manual) manual.onclick = function () { reveal(); apply.hidden = true; release.hidden = true; text("暂时无法检查更新：" + error.message); };
@@ -72,12 +76,17 @@
     };
     apply.onclick = function () {
       if (checking || updating || applied || !latest) return;
+      if (latest.updateKind === "installer") {
+        if (window.cep && window.cep.util) window.cep.util.openURLInDefaultBrowser(latest.downloadUrl);
+        else window.open(latest.downloadUrl);
+        return;
+      }
       if (options.isBusy && options.isBusy()) { text("请先完成或停止脚本任务，再更新 YOUKAI。"); return; }
       updating = true; freeze(true); apply.disabled = true; close.disabled = true; release.disabled = true;
       service.install(latest).then(function (result) {
         updating = false; applied = true;
         badge.hidden = true; apply.hidden = true; release.hidden = true; reload.hidden = false; reload.disabled = false;
-        title.textContent = "已更新到 " + result.version;
+        title.textContent = "已更新到 " + (result.displayVersion || result.version);
         text("更新完成，点击“重新加载”后生效。");
       }, function (error) {
         if (error.recoveryRequired) {

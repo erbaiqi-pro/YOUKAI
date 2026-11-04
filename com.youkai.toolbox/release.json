@@ -1,21 +1,27 @@
 {
   "name": "YOUKAI",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "repository": "https://github.com/erbaiqi-pro/YOUKAI",
   "author": "二百七",
-  "channel": "internal-test",
+  "channel": "stable",
   "date": "2026-11-04",
-  "scriptCount": 27,
+  "scriptCount": 26,
   "updatedScripts": [
     "建立画板.jsx"
   ],
   "addedScripts": [
     "刀线尺寸标注.jsx",
-    "导出PDF.jsx",
     "链接按文件夹命名.jsx",
     "文本按空格拆分.jsx",
     "文字跟随排版.jsx",
     "集体注释.jsx",
     "按注释批量修改.jsx"
-  ]
+  ],
+  "removedScripts": [
+    "导出PDF.jsx"
+  ],
+  "productVersion": "1.0.0",
+  "engineVersion": "1.0.3",
+  "updaterVersion": 2,
+  "updatePolicy": "scripts-or-installer"
 }

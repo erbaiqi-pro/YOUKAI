@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "name": "YOUKAI",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "files": [
     {
       "path": "CSXS/manifest.xml",
       "size": 1963,
-      "sha256": "9336f87e2cb4a5259f281fe2f769fa0f8f39a4e2b16a00cf6749ad3c9afb2b88"
+      "sha256": "dad2d89c1e2306afe759c4bdd510678f740fb927fe1364769dd4c7bd15a5dc56"
     },
     {
       "path": "LICENSE.txt",
@@ -45,13 +45,13 @@
     },
     {
       "path": "assets/js/update-ui.js",
-      "size": 6436,
-      "sha256": "dbf4b6b5d0d75930ea690d224a347179d3c6a68bb887ab25c6f39ff483c63d02"
+      "size": 7233,
+      "sha256": "0d543cfd77a44213398263e3fe9f003a9c389d0542c8adba586ad8799fcf14e1"
     },
     {
       "path": "assets/js/updater.js",
-      "size": 29337,
-      "sha256": "df2d0f6f83c84f14b40a884e957261fbcea355879138ab71fa5ffc790e83c7a1"
+      "size": 33345,
+      "sha256": "3ea0f7c88eec70f770103fea942345f2f4fac64ae5d5bb4714fb9851e33bc484"
     },
     {
       "path": "assets/templates/修改白墨颜色.csv",
@@ -135,8 +135,8 @@
     },
     {
       "path": "release.json",
-      "size": 504,
-      "sha256": "242013560d64bf9c430807886b4ee256b13675b57bb283051238a0ad0975ebeb"
+      "size": 651,
+      "sha256": "8ec82a8dd534a7571fd0af9d347bb634607d0a8bd34f218c71f6882130cf7b14"
     },
     {
       "path": "scripts/main.jsx",
@@ -222,16 +222,6 @@
       "path": "user_scripts/对齐对象.md",
       "size": 530,
       "sha256": "f2db93155f97e4731133de628fe9438a216f69311ab35bae62327a0feac4150f"
-    },
-    {
-      "path": "user_scripts/导出PDF.jsx",
-      "size": 9795,
-      "sha256": "9aa34dd5e7485091226d02dafafd37ef6d4dd8109775c7c91d291ea1d2a08247"
-    },
-    {
-      "path": "user_scripts/导出PDF.md",
-      "size": 629,
-      "sha256": "a4aede3a064c75bacd2188aab959bfd7097478f54b2fd90cc8fe5631cc84df45"
     },
     {
       "path": "user_scripts/导出指定图层.jsx",

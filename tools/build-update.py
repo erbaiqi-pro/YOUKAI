@@ -58,7 +58,7 @@ def collect():
     version = normalized(release['version'])
     xml = payload['CSXS/manifest.xml'].decode('utf-8')
     match = re.search(r'ExtensionBundleVersion="([^"]+)"', xml)
-    if not match or normalized(match.group(1)) != version:
+    if not match or normalized(match.group(1)) != normalized(release.get('engineVersion', version)):
         raise ValueError('CEP manifest and release version differ')
     count = sum(name.startswith('user_scripts/') and name.endswith('.jsx') for name in payload)
     if count != release['scriptCount']:
@@ -68,7 +68,7 @@ def collect():
     return version, payload
 
 
-def build(output, catalog_only=False):
+def build(output, catalog_only=False, kind='scripts'):
     version, payload = collect()
     sys.dont_write_bytecode = True
     spec = importlib.util.spec_from_file_location('privacy_check', ROOT / 'tools/check-public-privacy.py')
@@ -92,8 +92,31 @@ def build(output, catalog_only=False):
         (EXTENSION / 'licenses' / name).write_bytes(payload['licenses/' + name])
     if catalog_only:
         return {'version': version, 'catalog': str(EXTENSION / 'release-files.json')}
+    release = json.loads(payload['release.json'].decode('utf-8-sig'))
+    product_version = normalized(release.get('productVersion', version))
+    engine_version = normalized(release.get('engineVersion', version))
+    if kind == 'bootstrap' and (version != '1.0.3' or product_version != '1.0.0' or engine_version != '1.0.3'):
+        raise ValueError('The full online bundle is reserved for the one-time test-to-stable migration')
+    if kind == 'scripts':
+        payload = {name: content for name, content in payload.items()
+                   if name == 'release.json' or re.fullmatch(r'user_scripts/[^/]+\.(jsx|md)|assets/templates/[^/]+\.csv', name)}
+        catalog = {'schemaVersion': 1, 'name': 'YOUKAI', 'version': version, 'files': [
+            {'path': name, 'size': len(payload[name]), 'sha256': digest(payload[name])}
+            for name in sorted(payload)]}
+        data = (json.dumps(catalog, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=True)
+    manifest = {
+        'schemaVersion': 1, 'name': 'YOUKAI', 'repository': REPOSITORY,
+        'version': version, 'productVersion': product_version, 'channel': 'stable',
+        'updateKind': kind, 'minUpdaterVersion': 1 if kind == 'bootstrap' else 2,
+        'minEngineVersion': engine_version,
+        'platforms': ['win32', 'darwin'], 'minHostMajor': 16
+    }
+    manifest_file = output / 'YOUKAI-Update.json'
+    if kind == 'installer':
+        manifest_file.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        return {'version': version, 'manifest': str(manifest_file), 'published': False}
     archive = output / ('YOUKAI-Update-' + version + '.zip')
     # Stored ZIP is small for this toolbox and also works in older CEP Node runtimes.
     with zipfile.ZipFile(str(archive), 'w', compression=zipfile.ZIP_STORED, allowZip64=False) as package:
@@ -102,14 +125,7 @@ def build(output, catalog_only=False):
             entry.external_attr = 0o100644 << 16
             package.writestr(entry, payload[name])
         package.writestr('release-files.json', data)
-    manifest = {
-        'schemaVersion': 1, 'name': 'YOUKAI', 'repository': REPOSITORY,
-        'version': version, 'channel': 'stable', 'minUpdaterVersion': 1,
-        'platforms': ['win32', 'darwin'], 'minHostMajor': 16,
-        'asset': archive.name, 'size': archive.stat().st_size,
-        'sha256': digest(archive.read_bytes())
-    }
-    manifest_file = output / 'YOUKAI-Update.json'
+    manifest.update(asset=archive.name, size=archive.stat().st_size, sha256=digest(archive.read_bytes()))
     manifest_file.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     return {'version': version, 'archive': str(archive), 'manifest': str(manifest_file), 'published': False}
 
@@ -118,5 +134,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, default=ROOT / '项目资料' / '发布准备' / '联网更新')
     parser.add_argument('--catalog-only', action='store_true')
+    parser.add_argument('--kind', choices=['scripts', 'bootstrap', 'installer'], default='scripts', help='Scripts only by default; bootstrap is the one-time test-to-stable migration')
     args = parser.parse_args()
-    print(json.dumps(build(args.output, args.catalog_only), ensure_ascii=True))
+    print(json.dumps(build(args.output, args.catalog_only, args.kind), ensure_ascii=True))
