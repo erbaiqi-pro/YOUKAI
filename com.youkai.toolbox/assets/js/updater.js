@@ -3,7 +3,8 @@
 "use strict";
 var fs = require("fs"), path = require("path"), crypto = require("crypto");
 var https = require("https"), url = require("url"), zlib = require("zlib");
-var REPO = "erbaiqi-pro/YOUKAI", API = "https://api.github.com/repos/" + REPO + "/releases/latest";
+var REPO = "erbaiqi-pro/YOUKAI";
+var LATEST_MANIFEST = "https://github.com/" + REPO + "/releases/latest/download/YOUKAI-Update.json";
 var MANIFEST = "YOUKAI-Update.json", CATALOG = "release-files.json";
 var MAX_ZIP = 64 * 1024 * 1024, MAX_TOTAL = 128 * 1024 * 1024, MAX_FILES = 4096;
 function fail(message) { throw new Error(message); }
@@ -85,20 +86,40 @@ function allowedUrl(link) {
   var parsed = url.parse(link);
   return parsed.protocol === "https:" && !parsed.auth && (!parsed.port || parsed.port === "443") && ["api.github.com", "github.com", "release-assets.githubusercontent.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"].indexOf(parsed.hostname) >= 0;
 }
+function httpFailure(status, headers, body) {
+  headers = headers || {};
+  var limited = status === 429 || status === 403 && (String(headers["x-ratelimit-remaining"]) === "0" || !!headers["retry-after"] || /rate limit/i.test(String(body || "")));
+  var error = new Error(limited ? "GitHub 更新请求受限，请稍后再试（" + status + "）。" : status === 403 ? "更新服务拒绝访问（403），请稍后重试。" : "更新服务暂时不可用（" + status + "）。");
+  error.status = status; error.code = limited ? "RATE_LIMIT" : status === 403 ? "ACCESS_DENIED" : "HTTP_ERROR";
+  if (limited) {
+    var seconds = Number(headers["retry-after"] || 0), reset = Number(headers["x-ratelimit-reset"] || 0) * 1000;
+    if (!isFinite(seconds) || seconds < 0) seconds = 0;
+    if (!isFinite(reset) || reset < 0) reset = 0;
+    error.retryAt = Math.min(Date.now() + 24 * 3600000, Math.max(Date.now() + 60000, Date.now() + seconds * 1000, reset || 0));
+  }
+  return error;
+}
 function request(link, limit, progress, redirects) {
   return new Promise(function (resolve, reject) {
     if (!allowedUrl(link)) { reject(new Error("更新下载地址不受支持。")); return; }
     var done = false, req, timer;
     function finish(error, result) { if (done) return; done = true; clearTimeout(timer); if (error) reject(error); else resolve(result); }
     try {
-      req = https.get(link, {headers: {"User-Agent": "YOUKAI-Updater/1", "Accept": "application/vnd.github+json"}}, function (res) {
+      req = https.get(link, {headers: {"User-Agent": "YOUKAI-Updater/1", "Accept": "application/octet-stream, application/json"}}, function (res) {
         if ([301, 302, 303, 307, 308].indexOf(res.statusCode) >= 0) {
           res.resume(); clearTimeout(timer);
           if ((redirects || 0) >= 5 || !res.headers.location) { finish(new Error("更新下载重定向异常。")); return; }
           request(url.resolve(link, res.headers.location), limit, progress, (redirects || 0) + 1).then(function (result) { finish(null, result); }, finish);
           return;
         }
-        if (res.statusCode !== 200) { res.resume(); var error = new Error("更新服务暂时不可用（" + res.statusCode + "）。"); error.status = res.statusCode; finish(error); return; }
+        if (res.statusCode !== 200) {
+          var problem = "";
+          res.on("data", function (chunk) { if (problem.length < 4096) problem += chunk.toString("utf8").slice(0, 4096 - problem.length); });
+          res.on("end", function () { finish(httpFailure(res.statusCode, res.headers, problem)); });
+          res.on("error", finish);
+          res.on("aborted", function () { finish(new Error("更新连接已中断，请稍后重试。")); });
+          return;
+        }
         var total = Number(res.headers["content-length"] || 0), size = 0, chunks = [];
         if (total > limit) { res.destroy(); finish(new Error("更新文件超过大小限制。")); return; }
         res.on("data", function (chunk) {
@@ -114,7 +135,9 @@ function request(link, limit, progress, redirects) {
         });
         res.on("aborted", function () { finish(new Error("更新下载已中断。")); });
       });
-      req.on("error", finish);
+      req.on("error", function (error) {
+        var safe = new Error("连接更新服务失败，请检查网络或稍后重试。"); safe.code = error.code || "NETWORK_ERROR"; finish(safe);
+      });
       timer = setTimeout(function () { req.abort(); finish(new Error("检查或下载超时，请稍后重试。")); }, 60000);
     } catch (error) { finish(error); }
   });
@@ -214,6 +237,7 @@ function create(options) {
   var root = path.resolve(options.root), dataDir = path.resolve(options.dataDir);
   var current = version(readJson(path.join(root, "release.json")).version);
   var cacheFile = path.join(dataDir, "latest.json"), journalFile = path.join(dataDir, "transaction.json"), lockFile = path.join(dataDir, "update.lock");
+  var retryFile = path.join(dataDir, "rate-limit.json");
   var backupBase = path.join(path.dirname(path.dirname(root)), "YOUKAI-update-backups");
   var fetch = options.request || request, busy = false, cacheHours = 6;
   var platform = options.platform || process.platform, hostMajor = Number(options.hostMajor || 0);
@@ -234,34 +258,35 @@ function create(options) {
     if (release.html_url !== expectedPage) fail("更新说明地址不正确。");
     return {state: compare(next, current) > 0 ? "available" : "current", version: next, currentVersion: current, notes: String(release.body || "").slice(0, 12000), url: expectedPage, manifest: manifest, archiveUrl: matches[0].browser_download_url};
   }
+  function publicCandidate(manifest) {
+    validateManifest(manifest, manifest && manifest.version);
+    var next = manifest.version, tag = "v" + next;
+    return {state: compare(next, current) > 0 ? "available" : "current", version: next, currentVersion: current, notes: "",
+      url: "https://github.com/" + REPO + "/releases/tag/" + tag, manifest: manifest,
+      archiveUrl: "https://github.com/" + REPO + "/releases/download/" + tag + "/" + manifest.asset};
+  }
   function cached() {
-    try { var saved = readJson(cacheFile), result = saved.release ? candidate(saved.release, saved.manifest) : {state: "current", currentVersion: current}; result.checkedAt = saved.checkedAt; return result; }
+    try { var saved = readJson(cacheFile), result = saved.release ? candidate(saved.release, saved.manifest) : saved.manifest ? publicCandidate(saved.manifest) : {state: "current", currentVersion: current}; result.checkedAt = saved.checkedAt; return result; }
     catch (error) { return null; }
   }
   function check(force) {
-    var saved = cached(), apiRead = false;
+    var saved = cached(), blocked = null;
     if (!force && saved && saved.checkedAt > Date.now() - cacheHours * 3600000 && saved.checkedAt <= Date.now()) return Promise.resolve(saved);
-    return fetch(API, 2 * 1024 * 1024).then(function (data) {
-      var release = json(data);
-      apiRead = true;
-      if (compare(version(release.tag_name), current) <= 0) {
-        if (release.draft || release.prerelease) fail("未找到有效的正式发布。");
-        try { atomicJson(cacheFile, {checkedAt: Date.now(), release: null}); } catch (ignored) {}
-        return {state: "current", currentVersion: current};
-      }
-      if (!Array.isArray(release.assets)) fail("正式发布缺少更新文件。");
-      var assets = release.assets.filter(function (asset) { return asset.name === MANIFEST; });
-      if (assets.length !== 1 || !releaseAsset(assets[0].browser_download_url, release.tag_name, MANIFEST)) fail("正式发布缺少配套更新文件。");
-      return fetch(assets[0].browser_download_url, 1024 * 1024).then(function (bytes) {
-        var manifest = json(bytes), result = candidate(release, manifest);
-        try { atomicJson(cacheFile, {checkedAt: Date.now(), release: release, manifest: manifest}); } catch (ignored) {}
-        return result;
-      });
+    try { var delay = readJson(retryFile); if (delay.retryAt > Date.now()) { blocked = new Error("GitHub 更新请求仍受限，请稍后再试。"); blocked.code = "RATE_LIMIT"; blocked.retryAt = delay.retryAt; } } catch (ignoredDelay) {}
+    if (blocked) { if (saved && saved.state === "available") { saved.warning = blocked.message; return Promise.resolve(saved); } return Promise.reject(blocked); }
+    // GitHub 的公开 latest/download 链接只指向正式发布，不依赖 REST API 额度，也不需要 Token。
+    return fetch(LATEST_MANIFEST, 1024 * 1024).then(function (data) {
+      var manifest;
+      try { manifest = json(data); } catch (parseError) { fail("更新清单格式异常，请稍后再试。"); }
+      var result = publicCandidate(manifest);
+      try { atomicJson(cacheFile, {checkedAt: Date.now(), manifest: manifest}); } catch (ignored) {}
+      return result;
     }).catch(function (error) {
-      if (error.status === 404 && !apiRead) {
-        try { atomicJson(cacheFile, {checkedAt: Date.now(), release: null}); } catch (ignored) {}
+      if (error.status === 404) {
+        try { atomicJson(cacheFile, {checkedAt: Date.now(), manifest: null}); } catch (ignored) {}
         return {state: "current", currentVersion: current, noRelease: true};
       }
+      if (error.retryAt > Date.now()) { try { atomicJson(retryFile, {retryAt: error.retryAt}); } catch (ignoredRetry) {} }
       if (saved && saved.state === "available") { saved.warning = error.message; return saved; }
       throw error;
     });
@@ -386,4 +411,4 @@ function create(options) {
   }
   return {check: check, cached: cached, install: install, installBuffer: installBuffer, recover: recover, version: function () { return current; }};
 }
-module.exports = {create: create, compare: compare, version: version, validateManifest: validateManifest, unpack: unpack, payload: payload, sha256: sha, repository: REPO};
+module.exports = {create: create, compare: compare, version: version, validateManifest: validateManifest, unpack: unpack, payload: payload, sha256: sha, repository: REPO, httpFailure: httpFailure, latestManifestUrl: LATEST_MANIFEST};

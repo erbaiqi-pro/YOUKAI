@@ -2,21 +2,24 @@
 #ifndef YoukaiPayloadRoot
   #define YoukaiPayloadRoot "..\..\com.youkai.toolbox"
 #endif
+#ifndef YoukaiVersion
+  #define YoukaiVersion "1.0.1"
+#endif
 [Setup]
 AppId=com.youkai.toolbox
 AppName=YOUKAI
-AppVersion=1.0.0
-AppVerName=YOUKAI 1.0.0
+AppVersion={#YoukaiVersion}
+AppVerName=YOUKAI {#YoukaiVersion}
 AppPublisher=二百七
-VersionInfoVersion=1.0.0.0
-VersionInfoDescription=YOUKAI 1.0.0 安装程序
+VersionInfoVersion={#YoukaiVersion}.0
+VersionInfoDescription=YOUKAI {#YoukaiVersion} 安装程序
 DefaultDirName={userappdata}\Adobe\CEP\extensions\com.youkai.toolbox
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 UsePreviousAppDir=no
 PrivilegesRequired=lowest
 OutputDir=..\..\项目资料\构建缓存
-OutputBaseFilename=YOUKAI_1.0_Setup
+OutputBaseFilename=YOUKAI_{#YoukaiVersion}_Setup
 SetupIconFile=icon.ico
 ShowLanguageDialog=yes
 Compression=lzma2
@@ -24,7 +27,7 @@ SolidCompression=yes
 DirExistsWarning=no
 CloseApplications=no
 RestartApplications=no
-UninstallDisplayName=YOUKAI 1.0.0
+UninstallDisplayName=YOUKAI {#YoukaiVersion}
 UninstallDisplayIcon={app}\assets\icon.ico
 WizardStyle=modern
 
@@ -41,8 +44,8 @@ chinesesimplified.CleanFailed=旧版清理未完成，安装已停止。请检�
 english.CleanFailed=Cleanup could not be completed. Setup has stopped. Check the details below and try again.
 chinesesimplified.InstallMarkerFailed=无法写入安装标记，面板设置可能保留旧值。
 english.InstallMarkerFailed=Could not write the installation marker. The panel may retain previous settings.
-chinesesimplified.InstallComplete=YOUKAI 1.0 已安装。%n重启 Illustrator，在“窗口 > 扩展”中打开 YOUKAI。%n旧版及自定义脚本备份位置：%1%n外部 CSV 会保留，旧版面板设置恢复默认。
-english.InstallComplete=YOUKAI 1.0 is installed.%nRestart Illustrator and open YOUKAI from Window > Extensions.%nPrevious versions and custom scripts are backed up at: %1%nExternal CSV files are kept. Previous panel settings will be reset.
+chinesesimplified.InstallComplete=YOUKAI {#YoukaiVersion} 已安装。%n重启 Illustrator，在“窗口 > 扩展”中打开 YOUKAI。%n旧版及自定义脚本备份位置：%1%n外部 CSV 会保留，旧版面板设置恢复默认。
+english.InstallComplete=YOUKAI {#YoukaiVersion} is installed.%nRestart Illustrator and open YOUKAI from Window > Extensions.%nPrevious versions and custom scripts are backed up at: %1%nExternal CSV files are kept. Previous panel settings will be reset.
 
 [Files]
 Source: "clean-install.ps1"; Flags: dontcopy

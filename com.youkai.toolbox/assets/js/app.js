@@ -82,7 +82,7 @@
       // 若未载入（可能因 CEP 相对路径解析失败或版本冲突未载入），通过 $.evalFile 强行动态载入
       var extRoot = root || cleanSystemPath(cs.getSystemPath(SystemPath.EXTENSION || "extension"));
       var mainJsxPath = path.join(extRoot, "scripts", "main.jsx").replace(/\\/g, "/");
-      var loadCode = 'try { $.evalFile(' + toEvalString(mainJsxPath) + '); "LOADED"; } catch(err) { "ERR:" + err.toString(); }';
+      var loadCode = 'try { $.evalFile(' + toEvalString(mainJsxPath) + '); "LOADED"; } catch(err) { "ERR:" + err.toString() + (err.line ? " [main.jsx:" + err.line + "]" : ""); }';
       cs.evalScript(loadCode, function(loadRes) {
         cs.evalScript('(typeof Youkai !== "undefined" && typeof Youkai.runScript === "function") ? "OK" : "NO"', function(checkRes) {
           if (checkRes === "OK") {

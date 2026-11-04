@@ -5,6 +5,7 @@ from datetime import datetime
 import importlib.util
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -18,6 +19,10 @@ spec.loader.exec_module(snapshot)
 
 def main():
     approved = snapshot.verify_approved_scripts()
+    version = json.loads((ROOT / 'com.youkai.toolbox/release.json').read_text(encoding='utf-8'))['version']
+    if not re.fullmatch(r'\d+\.\d+\.\d+', version):
+        raise RuntimeError('Expected a three-part release version')
+    exe_name = 'YOUKAI_' + version + '_Setup.exe'
     script_count = len(list((ROOT / 'com.youkai.toolbox/user_scripts').glob('*.jsx')))
     compiler = Path(os.environ.get('YOUKAI_ISCC', r'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'))
     if not compiler.is_file():
@@ -44,13 +49,13 @@ def main():
         if target_file.stat().st_size != item['size'] or snapshot.digest(target_file) != item['sha256']:
             raise RuntimeError('Installer payload verification failed')
     shutil.copy2(ROOT / 'com.youkai.toolbox/release-files.json', payload / 'release-files.json')
-    completed = subprocess.run([str(compiler), '/O'+str(cache), '/DYoukaiPayloadRoot='+str(payload), str(ROOT / 'installers/windows/setup.iss')],
+    completed = subprocess.run([str(compiler), '/O'+str(cache), '/DYoukaiVersion='+version, '/DYoukaiPayloadRoot='+str(payload), str(ROOT / 'installers/windows/setup.iss')],
                                cwd=str(ROOT), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     (logs / '安装器编译记录.txt').write_bytes(completed.stdout)
     if completed.returncode:
         raise RuntimeError('Inno compilation failed; see internal build records')
     snapshot.verify_approved_scripts()
-    exe = cache / 'YOUKAI_1.0_Setup.exe'
+    exe = cache / exe_name
     if not exe.is_file() or exe.stat().st_size < 100000 or exe.read_bytes()[:2] != b'MZ':
         raise RuntimeError('No valid Windows executable was produced')
     source = snapshot.prepare_source()
@@ -67,12 +72,22 @@ def main():
     if snapshot.digest(pending) != snapshot.digest(exe):
         raise RuntimeError('Installer copy verification failed')
     pending.replace(target)
+    # Keep the delivery folder unambiguous; previous known YOUKAI installers remain backed up.
+    for older in delivery.glob('YOUKAI_*_Setup.exe'):
+        if older.name == exe_name:
+            continue
+        old_path = snapshot.within(older)
+        if old_path.parent != delivery.resolve() or not old_path.is_file():
+            raise RuntimeError('Unexpected previous installer path')
+        archived = snapshot.within(snapshot.INTERNAL / '历史备份' / '旧安装包' / (stamp+'-'+older.name))
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(old_path), str(archived))
     exe.unlink()  # Only the known, verified compiler output; never remove a directory tree.
-    intro = ('YOUKAI 1.0.0 · 内测版\n作者：二百七\n'
+    intro = (f'YOUKAI {version} · 内测版\n作者：二百七\n'
              f'内置 {script_count} 个脚本。\n\n'
              '包含集体注释、按注释批量修改和自愿联网更新。\n\n'
              '1. 保存工作，完全退出 Illustrator、Photoshop 和 InDesign。\n'
-             '2. 双击 YOUKAI_1.0_Setup.exe，选择安装语言，允许旧版清理授权。\n'
+             f'2. 双击 {exe_name}，选择安装语言，允许旧版清理授权。\n'
              '3. 重启 Illustrator，在“窗口 > 扩展”中打开 YOUKAI。\n'
              '4. 在系统设置中重新选择 CSV 和输出目录。\n\n'
              '安装会先备份并清理旧版，再安装新版。外部 CSV 保留。\n'
@@ -80,7 +95,7 @@ def main():
              '源码与版本下载：https://github.com/erbaiqi-pro/YOUKAI\n'
              '本版为内测版，首次使用请先用设计文件副本试用。\n')
     (delivery / '安装说明.txt').write_text(intro, encoding='utf-8-sig')
-    record = dict(name='YOUKAI', version='1.0.0', author='二百七', channel='internal-test',
+    record = dict(name='YOUKAI', version=version, author='二百七', channel='internal-test',
                   script_count=script_count,
                   built=datetime.now().isoformat(timespec='seconds'), exe=str(target),
                   exe_sha256=snapshot.digest(target), source=str(source),

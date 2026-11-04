@@ -58,10 +58,10 @@
       if (requested) { reveal(); text("正在检查更新…"); }
       service.check(force).then(function (result) {
         checking = false; apply.disabled = false; if (manual) manual.disabled = false;
-        render(result, requested && result.warning ? "暂时无法联网，显示上次检测到的版本 " + result.version + "。您可以稍后重试。" : "");
+        render(result, requested && result.warning ? "本次检查未完成，显示上次检测到的版本 " + result.version + "。\n" + result.warning : "");
       }, function (error) {
         checking = false; apply.disabled = false; if (manual) manual.disabled = false;
-        if (requested) render(latest, "暂时无法联网，请稍后重试。您可以继续使用当前版本。\n" + error.message);
+        if (requested) render(latest, "暂时无法检查更新，您可以继续使用当前版本。\n" + error.message);
       });
     }
     if (manual) manual.onclick = function () { check(true, true); };

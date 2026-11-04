@@ -270,7 +270,12 @@ Youkai.selectFolder = function (promptText) {
 };
 
 Youkai.isSkipBatchPath = function (value) {
-    return /(^|[\\/])links?([\\/]|$)/i.test(String(value || ""));
+    // ExtendScript 不接受字符类中未显式转义的 /；先统一分隔符再检查目录段。
+    var parts = String(value || "").replace(/\\/g, "/").toLowerCase().split("/");
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i] === "link" || parts[i] === "links") return true;
+    }
+    return false;
 };
 
 Youkai.isSkipBatchFolder = function (folder) {

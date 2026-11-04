@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "name": "YOUKAI",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "files": [
     {
       "path": "CSXS/manifest.xml",
       "size": 1963,
-      "sha256": "47106774537bf0bb448a3ea3d80c7a37ce64d23c699852131318018c79db87b4"
+      "sha256": "9336f87e2cb4a5259f281fe2f769fa0f8f39a4e2b16a00cf6749ad3c9afb2b88"
     },
     {
       "path": "LICENSE.txt",
@@ -35,23 +35,23 @@
     },
     {
       "path": "assets/js/app.js",
-      "size": 56516,
-      "sha256": "35b7e3d2fc1281f380cc1e383c6b5ee3602bffa23f530ba1bd2888d5b87ed0f8"
+      "size": 56567,
+      "sha256": "b336111356f8da1eb6516f44eeb68f31a0bec35786412a88a77992311881a5d4"
     },
     {
       "path": "assets/js/app_2023_safe.js",
-      "size": 8600,
-      "sha256": "21a69304b019826f352e7fb95761e6642d47bb06d870bdf2dc66a4680b292428"
+      "size": 8651,
+      "sha256": "eeb9f826378c1ecce09559a56e70a35a7a0f753d6a9ad4133ccf30450936902f"
     },
     {
       "path": "assets/js/update-ui.js",
-      "size": 6450,
-      "sha256": "ee5946d136fb647d3faacc2c4fd0af18f1a358024677e69a49fb9b56e599920a"
+      "size": 6436,
+      "sha256": "dbf4b6b5d0d75930ea690d224a347179d3c6a68bb887ab25c6f39ff483c63d02"
     },
     {
       "path": "assets/js/updater.js",
-      "size": 27291,
-      "sha256": "774556caa960b3bb9b6f425106e3a685d67f680fa12e8557a524559fcba1aebc"
+      "size": 29337,
+      "sha256": "df2d0f6f83c84f14b40a884e957261fbcea355879138ab71fa5ffc790e83c7a1"
     },
     {
       "path": "assets/templates/修改白墨颜色.csv",
@@ -136,12 +136,12 @@
     {
       "path": "release.json",
       "size": 504,
-      "sha256": "3c7a02b35ace43e016b04ca92f6ffb6aafe0601ab9864bea2beafecd919815dd"
+      "sha256": "242013560d64bf9c430807886b4ee256b13675b57bb283051238a0ad0975ebeb"
     },
     {
       "path": "scripts/main.jsx",
-      "size": 22421,
-      "sha256": "d7390c6516a0b1da149bf714f30086e1a8c5be3f80eea5b8448767c423beaef7"
+      "size": 22685,
+      "sha256": "608bf2402dc5216548ea0d2902d9e9b13718a870d4128796595cb13633cb3bb1"
     },
     {
       "path": "user_scripts/一键图片转曲.jsx",

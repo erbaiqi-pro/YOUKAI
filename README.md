@@ -1,8 +1,8 @@
-# YOUKAI 1.0
+# YOUKAI 1.0.1
 
 作者：二百七。Adobe Illustrator 脚本工具箱，包含 27 个脚本、简明说明、CSV 配置与批量运行面板。
 
-[下载 Windows 内测安装包](https://github.com/erbaiqi-pro/YOUKAI/releases/tag/v1.0.0) · [作者网站](https://erbaiqi.pages.dev/)
+[下载 Windows 内测安装包](https://github.com/erbaiqi-pro/YOUKAI/releases/tag/v1.0.1) · [作者网站](https://erbaiqi.pages.dev/)
 
 ## 使用
 
@@ -16,11 +16,13 @@
 
 2026-11-04 新增：集体注释、按注释批量修改。先生成注释，再手填 CSV 规则，批量移动、改专色 T 值、改普通 CMYK 色值或删除；批处理跳过 link／links 文件夹。各工具的简明说明位于脚本旁。
 
+1.0.1 修复 Illustrator 2026 中宿主桥接无法加载的问题。更新检查改为直接读取 GitHub 公开发布清单，不依赖 REST API 额度；403 会提示请求被拒绝或受限，不再误报为电脑没联网。
+
 ## 联网更新
 
-此版本已接入 GitHub 更新：后续正式版本在网站 LOGO 旁显示红色 NEW，点击后自愿更新，没有自动弹窗。可在系统设置中手动检查更新。安装过带更新器的版本后，后续普通更新无需重新下载安装包。
+此版本已接入 GitHub 更新：后续正式版本在网站 LOGO 旁显示红色 NEW，点击后自愿更新，没有自动弹窗。可在系统设置中手动检查更新。检查通过公开发布文件完成，不使用 API Key。
 
-当前仓库：https://github.com/erbaiqi-pro/YOUKAI 。1.0.0 为首个含更新器的内测首装版本，内测发布不触发正式版自动更新提醒；真实 Adobe 内在线替换仍需试用。发布与使用步骤见 [联网更新](docs/联网更新.md)。
+当前仓库：https://github.com/erbaiqi-pro/YOUKAI 。1.0.0 为首个含更新器的内测首装版本，请改用 1.0.1 修复包。内测发布不触发正式版自动更新提醒；宿主加载已在 Illustrator 2026 验证，完整的实际画稿流程仍需试用。发布与使用步骤见 [联网更新](docs/联网更新.md)。
 
 ## 隐私
 
@@ -34,6 +36,8 @@
 - `docs/`、`licenses/`：更新记录、已验收脚本校验和许可。
 
 运行 `npm test` 检查代码；`python tools/build-release.py` 生成 Windows 安装包。界面检查需要 Playwright，可用 `PLAYWRIGHT_MODULE` 和 `CHROME_PATH` 指定本地环境。
+
+Windows 安装了 Illustrator 时，可运行 `npm run test:host` 进行真实宿主编译和桥接加载检查。测试前先结束批处理；该检查不运行画稿处理脚本，不修改、保存或关闭文档。
 
 运行 `python tools/build-update.py` 在本地生成 `YOUKAI-Update.json` 和更新 ZIP。该命令不生成 EXE，也不上传文件。测试更新使用隔离的 CEP 文件夹，不会改动真实 Adobe 安装。
 

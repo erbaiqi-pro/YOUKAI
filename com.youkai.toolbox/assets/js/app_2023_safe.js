@@ -55,7 +55,7 @@
             }
             var extRoot = root || cleanSystemPath(cs.getSystemPath(SystemPath.EXTENSION || "extension"));
             var mainJsxPath = path.join(extRoot, "scripts", "main.jsx").replace(/\\/g, "/");
-            var loadCode = 'try { $.evalFile(' + JSON.stringify(mainJsxPath) + '); "LOADED"; } catch(err) { "ERR:" + err.toString(); }';
+            var loadCode = 'try { $.evalFile(' + JSON.stringify(mainJsxPath) + '); "LOADED"; } catch(err) { "ERR:" + err.toString() + (err.line ? " [main.jsx:" + err.line + "]" : ""); }';
             cs.evalScript(loadCode, function(loadRes) {
                 cs.evalScript('(typeof Youkai !== "undefined" && typeof Youkai.runScript === "function") ? "OK" : "NO"', function(checkRes) {
                     if (checkRes === "OK") {
