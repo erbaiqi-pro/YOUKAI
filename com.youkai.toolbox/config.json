@@ -1,0 +1,26 @@
+{
+  "scanDepth": 0,
+  "ignoredDirs": [
+    "node_modules",
+    ".git",
+    ".svn",
+    ".hg"
+  ],
+  "languageMode": "auto",
+  "storage": {
+    "youkai.illustrator.activeSource": "all",
+    "youkai.illustrator.recentSources": "[]",
+    "youkai.illustrator.runStats": "{}",
+    "youkai.illustrator.favorites": "{}",
+    "youkai.illustrator.cppMode": "auto",
+    "youkai.photoshop.activeSource": "all",
+    "youkai.photoshop.recentSources": "[]",
+    "youkai.photoshop.runStats": "{}",
+    "youkai.photoshop.favorites": "{}",
+    "youkai.indesign.activeSource": "all",
+    "youkai.indesign.recentSources": "[]",
+    "youkai.indesign.runStats": "{}",
+    "youkai.indesign.favorites": "{}"
+  ],
+  "theme": "dark"
+}

@@ -1,0 +1,20 @@
+{
+  "name": "youkai-toolbox",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Adobe CEP toolbox and regression checks",
+  "scripts": {
+    "test": "node tools/verify.cjs",
+    "test:ui": "node tools/ui-check.cjs",
+    "test:update": "node tools/update-check.cjs",
+    "test:installer": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/check-installer.ps1",
+    "build": "python tools/build-release.py",
+    "build:source": "python tools/build-github.py",
+    "build:update": "python tools/build-update.py"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  },
+  "author": "二百七",
+  "license": "MIT"
+}

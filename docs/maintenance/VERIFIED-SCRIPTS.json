@@ -1,0 +1,70 @@
+{
+  "note": "用户已测试并要求原样保留的脚本。只将战队色修改.jsx改名为色板方案切换.jsx；禁止改动这些文件的代码、注释、编码或换行。 2026-10-20 用户确认新增的 5 个测试脚本好用并要求纳入安装包；这 5 个脚本同样按原始字节保留。",
+  "files": [
+    {
+      "source": "项目资料/已验收原脚本/变量导出到表格.jsx",
+      "target": "com.youkai.toolbox/user_scripts/变量导出到表格.jsx",
+      "sha256": "81243609e6651d17eb4213f9571f33ff7b35f91af5d6f6155fc646da15289b25",
+      "bytes": 2361
+    },
+    {
+      "source": "项目资料/已验收原脚本/打包.jsx",
+      "target": "com.youkai.toolbox/user_scripts/打包.jsx",
+      "sha256": "3e24c5064953299fa0dbc8d8662b6e6e367818c39189b1ff145d98b571e9d465",
+      "bytes": 7116
+    },
+    {
+      "source": "项目资料/已验收原脚本/导出指定图层.jsx",
+      "target": "com.youkai.toolbox/user_scripts/导出指定图层.jsx",
+      "sha256": "be830bdd3b3e6faad23c6c5bd4d52fb4820d995fa455011cd6b5aeb17a19f2a7",
+      "bytes": 14677
+    },
+    {
+      "source": "项目资料/已验收原脚本/隐藏删除图层.jsx",
+      "target": "com.youkai.toolbox/user_scripts/隐藏删除图层.jsx",
+      "sha256": "5e6ccb10394f704398230f94dcd6451ea210778a95af80f315ef14b67163fe33",
+      "bytes": 6976
+    },
+    {
+      "source": "项目资料/已验收原脚本/战队色修改.jsx",
+      "target": "com.youkai.toolbox/user_scripts/色板方案切换.jsx",
+      "sha256": "d76e469d02801f2afb823e5ff05c28d3fdbea82eb8ac350b7dd0a3c001bfce3c",
+      "bytes": 10330
+    },
+    {
+      "source": "项目资料/测试脚本/刀线尺寸标注.jsx",
+      "target": "com.youkai.toolbox/user_scripts/刀线尺寸标注.jsx",
+      "sha256": "23d1f088651d0630f9f3fe8f4a43869b57a88bcf0d29e79f32b0d75b1e4abb69",
+      "bytes": 20736,
+      "approved": "2026-10-20"
+    },
+    {
+      "source": "项目资料/测试脚本/导出PDF.jsx",
+      "target": "com.youkai.toolbox/user_scripts/导出PDF.jsx",
+      "sha256": "9aa34dd5e7485091226d02dafafd37ef6d4dd8109775c7c91d291ea1d2a08247",
+      "bytes": 9795,
+      "approved": "2026-10-20"
+    },
+    {
+      "source": "项目资料/测试脚本/链接按文件夹命名.jsx",
+      "target": "com.youkai.toolbox/user_scripts/链接按文件夹命名.jsx",
+      "sha256": "349755da52a7329dc30682ca6e71c79e9481f810a218b3662d2fd25c25230277",
+      "bytes": 4780,
+      "approved": "2026-10-20"
+    },
+    {
+      "source": "项目资料/测试脚本/文本按空格拆分.jsx",
+      "target": "com.youkai.toolbox/user_scripts/文本按空格拆分.jsx",
+      "sha256": "d840053218afddad6e8e11385d16cfa673a287e38a89beb25287de1734a0740a",
+      "bytes": 12714,
+      "approved": "2026-10-20"
+    },
+    {
+      "source": "项目资料/测试脚本/文字跟随排版.jsx",
+      "target": "com.youkai.toolbox/user_scripts/文字跟随排版.jsx",
+      "sha256": "5f3ccad3025061c54d1a2d987190803fd9235a22d36ff6597ba85bc37886bc98",
+      "bytes": 32127,
+      "approved": "2026-10-20"
+    }
+  ]
+}

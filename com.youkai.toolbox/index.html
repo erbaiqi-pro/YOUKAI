@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- YOUKAI 1.0 | 作者：二百七 | Copyright (c) 2026 二百七 | SPDX-License-Identifier: MIT -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>YOUKAI</title>
+  <style>
+    html, body {
+      width: 100%; height: 100%; margin: 0;
+      background: #0B0C0E; color: #fff;
+      font-family: "Microsoft YaHei", Arial, sans-serif; font-size: 13px;
+    }
+    .boot { padding: 16px; line-height: 1.6; font-weight: bold; color: #F9FF00; }
+  </style>
+</head>
+<body>
+  <div id="boot" class="boot">正在选择 Youkai 运行面板...</div>
+  <script src="assets/js/CSInterface.js"></script>
+  <script>
+    (function () {
+      var fallback = "index_2023_safe.html";
+      var full = "index_full.html";
+      var boot = document.getElementById("boot");
+
+      function write(message) { boot.innerHTML = String(message || ""); }
+
+      function versionMajor(versionText) {
+        var match = String(versionText || "").match(/(\d+)(?:\.\d+)?/);
+        return match ? parseInt(match[1], 10) || 0 : 0;
+      }
+
+      try {
+        var cs = new CSInterface();
+        var env = cs.getHostEnvironment ? cs.getHostEnvironment() : null;
+        var appVersion = env && env.appVersion ? env.appVersion : "";
+        var major = versionMajor(appVersion);
+
+        if (major >= 30) {
+          write("正在载入 Youkai 核心大面板...");
+          window.location.replace(full);
+          return;
+        }
+        write("正在载入旧版宿主完整面板...");
+        window.location.replace(full + "?legacy=1");
+      } catch (err) {
+        write("正在加载安全兼容面板...");
+        window.location.replace(fallback);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+﻿YOUKAI 1.0 - Internal test release
+Author: 二百七
+
+Includes 27 scripts, collective annotation, note-based batch editing and optional online updates.
+
+Save your work and fully exit Illustrator, Photoshop and InDesign before installing.
+
+Setup will back up and remove previous YOUKAI installations from the current user's and shared CEP extension folders, then install this version.
+Backups: %LOCALAPPDATA%\YOUKAI\backups
+Custom scripts from the old installation remain in the backup. Restore individual scripts as needed.
+
+External CSV files and design files are kept. Panel settings will be reset; select your CSV folder again when you first open the panel.
+Cleanup requests administrator permission. The new version is installed for the Windows user who started Setup.
+
+This is a test build. Use copies of your design files for initial testing. New stable versions show a red NEW badge; updates are optional and do not open automatic dialogs.

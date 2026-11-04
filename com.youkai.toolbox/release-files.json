@@ -1,0 +1,417 @@
+{
+  "schemaVersion": 1,
+  "name": "YOUKAI",
+  "version": "1.0.0",
+  "files": [
+    {
+      "path": "CSXS/manifest.xml",
+      "size": 1963,
+      "sha256": "47106774537bf0bb448a3ea3d80c7a37ce64d23c699852131318018c79db87b4"
+    },
+    {
+      "path": "LICENSE.txt",
+      "size": 1066,
+      "sha256": "fdfcc81c81388522c1bda8229e5e82a1c106453f0b87e2c179b830007489cd90"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "size": 1535,
+      "sha256": "d957748635c97275cc08f22bced6230050983aeb4032b789d1051e3d997af390"
+    },
+    {
+      "path": "assets/css/app.css",
+      "size": 21733,
+      "sha256": "cd188e2009671c03f15808dc17ea57115848897cc8300224c8f821b7815f0c31"
+    },
+    {
+      "path": "assets/icon.ico",
+      "size": 16958,
+      "sha256": "45f376065ad216311c9af9d5e76acb0b0e6f0f78487e9b156c94f625a555fae7"
+    },
+    {
+      "path": "assets/js/CSInterface.js",
+      "size": 2423,
+      "sha256": "537604a0d174d5b3f0e3d8abe57d27447066f0cd3494f300a33d345f862b16ef"
+    },
+    {
+      "path": "assets/js/app.js",
+      "size": 56516,
+      "sha256": "35b7e3d2fc1281f380cc1e383c6b5ee3602bffa23f530ba1bd2888d5b87ed0f8"
+    },
+    {
+      "path": "assets/js/app_2023_safe.js",
+      "size": 8600,
+      "sha256": "21a69304b019826f352e7fb95761e6642d47bb06d870bdf2dc66a4680b292428"
+    },
+    {
+      "path": "assets/js/update-ui.js",
+      "size": 6450,
+      "sha256": "ee5946d136fb647d3faacc2c4fd0af18f1a358024677e69a49fb9b56e599920a"
+    },
+    {
+      "path": "assets/js/updater.js",
+      "size": 27291,
+      "sha256": "774556caa960b3bb9b6f425106e3a685d67f680fa12e8557a524559fcba1aebc"
+    },
+    {
+      "path": "assets/templates/修改白墨颜色.csv",
+      "size": 20,
+      "sha256": "bf317a1ae4f2f443579d523f8d407b6f5001bee7f6c388662e5faaa2991a3fce"
+    },
+    {
+      "path": "assets/templates/偏位补偿.csv",
+      "size": 37,
+      "sha256": "509255cc52dea26052da0da5e90f64bfc64d5f37991260b6da4aaaea45f9318e"
+    },
+    {
+      "path": "assets/templates/导出指定图层.csv",
+      "size": 42,
+      "sha256": "37fab8c7b6e5f71b2e9f8ee372e9f9272f76cec7f8642562c789dfd3950cde04"
+    },
+    {
+      "path": "assets/templates/按注释批量修改.csv",
+      "size": 66,
+      "sha256": "381e9c6706c27ee9e63879d1691b0067c07be7b4e975ccc08971e8aeda5ab6c1"
+    },
+    {
+      "path": "assets/templates/文本转大写.csv",
+      "size": 32,
+      "sha256": "4fdfc0a6d9101389995d8a9a86361d1da5b7b0d76fa8fdfb0e9ce1f53f59fefe"
+    },
+    {
+      "path": "assets/templates/查找与替换.csv",
+      "size": 23,
+      "sha256": "458841facc66ce59615106492f7b0f2fc4808913051053d7c32b03265f3609c6"
+    },
+    {
+      "path": "assets/templates/画板净删.csv",
+      "size": 22,
+      "sha256": "25bb7a218c6eefd5c6408c38e7c9205d6a8b1e3619ce149f4331dcce3cce7235"
+    },
+    {
+      "path": "assets/templates/色板方案切换.csv",
+      "size": 68,
+      "sha256": "c85b31a9ca957df5f61838a076716f09d402ff477f1980ac71301952e50d8147"
+    },
+    {
+      "path": "assets/templates/跨文件提取并替换.csv",
+      "size": 62,
+      "sha256": "510c4531091a2e53978db3c71ac12d6a4cff74269fb31f05b20fabc0ebad83fa"
+    },
+    {
+      "path": "assets/templates/隐藏删除图层.csv",
+      "size": 37,
+      "sha256": "f14f9745d0bc0dd8235a2213fb0dcf4fff41f1795725039948c92a6fb10d1fce"
+    },
+    {
+      "path": "config.json",
+      "size": 734,
+      "sha256": "eba6260156c2f1c312ef913697ca46984c53f9a031e013290d6a381fb0ef8f45"
+    },
+    {
+      "path": "index.html",
+      "size": 1741,
+      "sha256": "8c33514aa5182ad6c302d51492db24680a3eda439812193fefbb17e934c2da18"
+    },
+    {
+      "path": "index_2023_safe.html",
+      "size": 2481,
+      "sha256": "bf2296b9ecb1cca9e17f727bff205819ecf5c8552c650c868d2a0dfc03958e57"
+    },
+    {
+      "path": "index_full.html",
+      "size": 10607,
+      "sha256": "c09b0a153a9c24b89613e819c246225c10e752a35b943aa195f30911fa7aa298"
+    },
+    {
+      "path": "licenses/INNO-SETUP-LICENSE.txt",
+      "size": 1521,
+      "sha256": "2e5346868c2a18434489824e11d65c3031620f792fefc415d05f19cd441abf5c"
+    },
+    {
+      "path": "licenses/MIT-zh-CN.txt",
+      "size": 1019,
+      "sha256": "799e01be0fc8b32829ad5463a03dba6756f000808bb78c5608d5c0272822021e"
+    },
+    {
+      "path": "release.json",
+      "size": 504,
+      "sha256": "3c7a02b35ace43e016b04ca92f6ffb6aafe0601ab9864bea2beafecd919815dd"
+    },
+    {
+      "path": "scripts/main.jsx",
+      "size": 22421,
+      "sha256": "d7390c6516a0b1da149bf714f30086e1a8c5be3f80eea5b8448767c423beaef7"
+    },
+    {
+      "path": "user_scripts/一键图片转曲.jsx",
+      "size": 15076,
+      "sha256": "3664e623390008d5469714e4c0bddc92ee9828be58954e530d0aaae6f3800fec"
+    },
+    {
+      "path": "user_scripts/一键图片转曲.md",
+      "size": 501,
+      "sha256": "b1e98b96e9453a5d3aa6fa68d1bab6907ec7a8a20f17792ad6def062832f94e7"
+    },
+    {
+      "path": "user_scripts/一键扩缩.jsx",
+      "size": 37271,
+      "sha256": "7fd8f09766559f13c820335ed8d3d565c8198d5679c44955f3af7ca9c0c0b16c"
+    },
+    {
+      "path": "user_scripts/一键扩缩.md",
+      "size": 644,
+      "sha256": "42131bace3c995d35a867ecee54668b3da900c16f7d667e18962625a7ae6ac16"
+    },
+    {
+      "path": "user_scripts/修改白墨颜色.jsx",
+      "size": 9016,
+      "sha256": "a3bb1484582da16dcee72e406e548d5305692a7d921b68facf29cffaa71ade57"
+    },
+    {
+      "path": "user_scripts/修改白墨颜色.md",
+      "size": 512,
+      "sha256": "89d4cdb7c248fe7ad768425624d2254d84c9d09e64cee9a5a3bcc2b498bb1550"
+    },
+    {
+      "path": "user_scripts/偏位补偿.jsx",
+      "size": 8811,
+      "sha256": "4d3a82df34191c0577c90d65a958cccda0adb972bf65ed854d22d0e3e2d00abd"
+    },
+    {
+      "path": "user_scripts/偏位补偿.md",
+      "size": 561,
+      "sha256": "d64f33aeb5d2af1a7670b4fb15773286f3fdb82e180e83e5a5687a0d1e049f84"
+    },
+    {
+      "path": "user_scripts/刀线尺寸标注.jsx",
+      "size": 20736,
+      "sha256": "23d1f088651d0630f9f3fe8f4a43869b57a88bcf0d29e79f32b0d75b1e4abb69"
+    },
+    {
+      "path": "user_scripts/刀线尺寸标注.md",
+      "size": 571,
+      "sha256": "24a94176e214d88e3ea6762941655c1e362ccc7f361556be25e1d6eea39d62e1"
+    },
+    {
+      "path": "user_scripts/分层导出.jsx",
+      "size": 30181,
+      "sha256": "3ace914683b7d08fcee53d43da62a12f2611d2e05368aaf2ea8733d4d58db50b"
+    },
+    {
+      "path": "user_scripts/分层导出.md",
+      "size": 555,
+      "sha256": "aa3730b75c31d7e4ffe98c68b691beb06b0de5b984c183f022b33bb44113a9c3"
+    },
+    {
+      "path": "user_scripts/变量导出到表格.jsx",
+      "size": 2361,
+      "sha256": "81243609e6651d17eb4213f9571f33ff7b35f91af5d6f6155fc646da15289b25"
+    },
+    {
+      "path": "user_scripts/变量导出到表格.md",
+      "size": 436,
+      "sha256": "aba0e4ed9d26d601bc3099f7a5dffc50739adfac84cc727f9b5e210de460419a"
+    },
+    {
+      "path": "user_scripts/对齐对象.jsx",
+      "size": 7577,
+      "sha256": "474e924cd7a9e3b4990a1900732064854113ee45f99a494a6b6a722e4abf8048"
+    },
+    {
+      "path": "user_scripts/对齐对象.md",
+      "size": 530,
+      "sha256": "f2db93155f97e4731133de628fe9438a216f69311ab35bae62327a0feac4150f"
+    },
+    {
+      "path": "user_scripts/导出PDF.jsx",
+      "size": 9795,
+      "sha256": "9aa34dd5e7485091226d02dafafd37ef6d4dd8109775c7c91d291ea1d2a08247"
+    },
+    {
+      "path": "user_scripts/导出PDF.md",
+      "size": 629,
+      "sha256": "a4aede3a064c75bacd2188aab959bfd7097478f54b2fd90cc8fe5631cc84df45"
+    },
+    {
+      "path": "user_scripts/导出指定图层.jsx",
+      "size": 14677,
+      "sha256": "be830bdd3b3e6faad23c6c5bd4d52fb4820d995fa455011cd6b5aeb17a19f2a7"
+    },
+    {
+      "path": "user_scripts/导出指定图层.md",
+      "size": 612,
+      "sha256": "36390372bba65518cc622927e4f089d63e714f981304277d96ce499b3348f78c"
+    },
+    {
+      "path": "user_scripts/建立画板.jsx",
+      "size": 3003,
+      "sha256": "8341df964e71a7ba04100eb901d354d07455707c246d5c8f74f56519b96146da"
+    },
+    {
+      "path": "user_scripts/建立画板.md",
+      "size": 652,
+      "sha256": "377379b996dffea275b328faf70fca8d547593a1968344c7b01324a7df76faba"
+    },
+    {
+      "path": "user_scripts/打包.jsx",
+      "size": 7116,
+      "sha256": "3e24c5064953299fa0dbc8d8662b6e6e367818c39189b1ff145d98b571e9d465"
+    },
+    {
+      "path": "user_scripts/打包.md",
+      "size": 591,
+      "sha256": "9212ac7391797bdb671c72177eb2f93097f531737c1f3ccd0c669813bb5cc0dc"
+    },
+    {
+      "path": "user_scripts/按注释批量修改.jsx",
+      "size": 25892,
+      "sha256": "b4762f4e1202f6002179c32d0527d7a8e091f3e92cd4303cba635d3b576676f5"
+    },
+    {
+      "path": "user_scripts/按注释批量修改.md",
+      "size": 1212,
+      "sha256": "d23d380f0e13ced04550566c92b406ec7312a3249633eb8699fc83ec10f69d1d"
+    },
+    {
+      "path": "user_scripts/文字跟随排版.jsx",
+      "size": 32127,
+      "sha256": "5f3ccad3025061c54d1a2d987190803fd9235a22d36ff6597ba85bc37886bc98"
+    },
+    {
+      "path": "user_scripts/文字跟随排版.md",
+      "size": 724,
+      "sha256": "f017c9a40bd41b618c5ae75c437e6efcf8da524e1c0562d46d0cb34e8c0bbe92"
+    },
+    {
+      "path": "user_scripts/文本按空格拆分.jsx",
+      "size": 12714,
+      "sha256": "d840053218afddad6e8e11385d16cfa673a287e38a89beb25287de1734a0740a"
+    },
+    {
+      "path": "user_scripts/文本按空格拆分.md",
+      "size": 528,
+      "sha256": "4b89a8ba8ed69c49bf5dd923a904b86048eaf5be491bbf76e6fa408d2222677f"
+    },
+    {
+      "path": "user_scripts/文本转大写.jsx",
+      "size": 8196,
+      "sha256": "12fbbc061b2fc9bbf25522a8d53b2943eaebac5131142c75a1728a88cfa6481f"
+    },
+    {
+      "path": "user_scripts/文本转大写.md",
+      "size": 485,
+      "sha256": "3e8443a5885bfabad2e581116217d70e52c1c4ca1bb36095fe930603b4b69f77"
+    },
+    {
+      "path": "user_scripts/文档净化转曲.jsx",
+      "size": 2030,
+      "sha256": "bfe9a243a76afe0a2fbf8923c76bb1ad0a44727696ed51707203eb4ae207714d"
+    },
+    {
+      "path": "user_scripts/文档净化转曲.md",
+      "size": 561,
+      "sha256": "85cc7801250b89f5a95481a5d888c916ac2429af7f05749615f796df8ac9d026"
+    },
+    {
+      "path": "user_scripts/查找与替换.jsx",
+      "size": 5663,
+      "sha256": "54144f7df229cf4b42c5b46ed81a05c19c2338bbfb7f24a6c8c40ac89c2b7463"
+    },
+    {
+      "path": "user_scripts/查找与替换.md",
+      "size": 515,
+      "sha256": "14b857890e8ef94ee1bf6247f37c7e8cda0e9d09a114841a5d71a3db7b13e914"
+    },
+    {
+      "path": "user_scripts/模板批量换图.jsx",
+      "size": 10943,
+      "sha256": "c484d2627d2365217f00bfe733205631d45944f142f4fc022eb51c2f6904ef0e"
+    },
+    {
+      "path": "user_scripts/模板批量换图.md",
+      "size": 678,
+      "sha256": "2e678621a91a1b8227da5d460425b83fa3f3161b425d9631daa29d4606e48996"
+    },
+    {
+      "path": "user_scripts/添加变量.jsx",
+      "size": 11560,
+      "sha256": "7b8fe18dd2e132fd39c783687ad9800b0bfc0a42534ffa2d1c3a92ebc59f0a9a"
+    },
+    {
+      "path": "user_scripts/添加变量.md",
+      "size": 528,
+      "sha256": "ca3a9840dcf5f4ad688f07c97254201da6e1a253fc69b72890a5df215f9d7072"
+    },
+    {
+      "path": "user_scripts/画板净删.jsx",
+      "size": 12580,
+      "sha256": "4d4f77329bb77d4f1c9b78ec711317081c1593d085a9ba222a2fb2f096816d3f"
+    },
+    {
+      "path": "user_scripts/画板净删.md",
+      "size": 665,
+      "sha256": "789c4f7d5ec9b61ac7041d39f32d9837116ddfcc4a96fcd8a151bde45ddfaabe"
+    },
+    {
+      "path": "user_scripts/色板方案切换.jsx",
+      "size": 10330,
+      "sha256": "d76e469d02801f2afb823e5ff05c28d3fdbea82eb8ac350b7dd0a3c001bfce3c"
+    },
+    {
+      "path": "user_scripts/色板方案切换.md",
+      "size": 618,
+      "sha256": "e07370523c2bc20d94c2e3731c8a3116e548f98187a1dd4a5f6afb913a7fbcd8"
+    },
+    {
+      "path": "user_scripts/色稿自动拼版.jsx",
+      "size": 27986,
+      "sha256": "c0c711b9b4ccce9d698fca6703356ba55d01c1616f72b470b320554255c11387"
+    },
+    {
+      "path": "user_scripts/色稿自动拼版.md",
+      "size": 666,
+      "sha256": "21a782cb8b3b149635bc7ef884d9046385f9468e929d58d86166e8a350c27783"
+    },
+    {
+      "path": "user_scripts/跨文件提取并替换.jsx",
+      "size": 17351,
+      "sha256": "6c4fdce45890914834aa5f69d9f3c1c28466b11db2f99a05af42ede52755cad8"
+    },
+    {
+      "path": "user_scripts/跨文件提取并替换.md",
+      "size": 904,
+      "sha256": "36a0f1522b6a5de6bd03efac00f6e49d9d6cf81aa41d9d97962f074487197940"
+    },
+    {
+      "path": "user_scripts/链接按文件夹命名.jsx",
+      "size": 4780,
+      "sha256": "349755da52a7329dc30682ca6e71c79e9481f810a218b3662d2fd25c25230277"
+    },
+    {
+      "path": "user_scripts/链接按文件夹命名.md",
+      "size": 634,
+      "sha256": "9f9ddbf67ea8b9959f926fb251a99dea87e4ca65373a9290f2b8fd07529c69ca"
+    },
+    {
+      "path": "user_scripts/隐藏删除图层.jsx",
+      "size": 6976,
+      "sha256": "5e6ccb10394f704398230f94dcd6451ea210778a95af80f315ef14b67163fe33"
+    },
+    {
+      "path": "user_scripts/隐藏删除图层.md",
+      "size": 518,
+      "sha256": "0d47b8b8bcb41f26d740d79ca965a1f1a2fb93b0d3c32128b380efb687a1b115"
+    },
+    {
+      "path": "user_scripts/集体注释.jsx",
+      "size": 3840,
+      "sha256": "d905be85dc8e53a79c759bcc7605d966061d16cb63d3a19c809c07c465be8d2d"
+    },
+    {
+      "path": "user_scripts/集体注释.md",
+      "size": 699,
+      "sha256": "876f171ca8be2b6b902bffc3aa3f5c3c8b20f748b48089fb7cc08561fa0ad51f"
+    }
+  ]
+}

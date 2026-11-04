@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- YOUKAI 1.0 | 作者：二百七 | Copyright (c) 2026 二百七 | SPDX-License-Identifier: MIT -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>YOUKAI</title>
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="youkai-brand"><div class="logo-wrap">
+        <span class="logo-tag">SAFE</span>
+        <span class="logo-title">YOUKAI</span>
+      </div><button id="youkaiUpdateBadge" class="youkai-new-badge" hidden aria-label="发现新版本，查看更新">NEW</button></div>
+      <div class="search-row">
+        <input id="search" type="text" placeholder="搜索本地脚本...">
+        <button id="refreshBtn">刷新</button>
+      </div>
+      <div class="youkai-version-row">当前版本 <span id="youkaiCurrentVersion">—</span><button id="youkaiCheckUpdateBtn" class="quick-filter-btn">检查更新</button></div>
+    </header>
+    <div id="status" class="youkai-boot-status">正在启动兼容安全服务...</div>
+    <section id="youkaiUpdateCard" class="youkai-update-card" hidden aria-label="软件更新">
+      <div class="youkai-update-heading"><strong id="youkaiUpdateTitle">软件更新</strong><button id="youkaiCloseUpdateBtn" class="quick-filter-btn" aria-label="收起更新">×</button></div>
+      <p id="youkaiUpdateStatus" role="status" aria-live="polite"></p>
+      <div class="youkai-update-actions"><button id="youkaiApplyUpdateBtn" class="primary-create" hidden>立即更新</button><button id="youkaiReleaseBtn" class="quick-filter-btn" hidden>更新说明</button><button id="youkaiReloadUpdateBtn" class="primary-create" hidden>重新加载</button></div>
+    </section>
+    <section class="content" style="margin-top:4px;">
+      <div id="list" class="script-list"></div>
+    </section>
+    <div id="output" style="padding:6px; height:60px; background:#000; overflow-y:auto; font-family:monospace; font-size:11px; color:#aaa;"></div>
+    <footer class="footerbar" style="margin-top:4px; flex-direction:row; gap:4px;">
+      <button id="runBtn" class="primary-create" style="flex:1;">运行选中脚本</button>
+      <button id="copyBtn" class="quick-filter-btn" style="width:60px;">复制结果</button>
+    </footer>
+  </div>
+  <script src="assets/js/CSInterface.js"></script>
+  <script src="assets/js/update-ui.js"></script>
+  <script src="assets/js/app_2023_safe.js"></script>
+</body>
+</html>
